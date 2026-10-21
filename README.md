@@ -1,6 +1,6 @@
 # Project Zomboid Build 42 Dedicated Server on ARM64 / FEX-Emu
 
-A **vanilla, no-Workshop-mods** Docker Compose starting point for running the x86_64 Project Zomboid dedicated server on an **ARM64 Linux VPS**, using [FEX-Emu](https://github.com/FEX-Emu/FEX). Based on the architecture used for MarcBoid on Oracle Cloud Always Free (Ampere A1, 4 OCPUs / 24 GiB).
+A **vanilla, no-Workshop-mods** Docker Compose starting point for running the x86_64 Project Zomboid dedicated server on an **ARM64 Linux VPS**, using [FEX-Emu](https://github.com/FEX-Emu/FEX). Based on the architecture used for my personal Zomboid server on Oracle Cloud Always Free (Ampere A1, 4 OCPUs / 24 GiB).
 
 > **Public preview / not yet independently end-to-end tested on a new VPS.** Steam, FEX, and Project Zomboid Build 42 change frequently. Contributions and verified installation reports are welcome. This repository contains **none of MarcBoid's private server settings, passwords, player data, saves or mods**.
 
@@ -77,10 +77,6 @@ The server's generated INI lives under `Server/servertest.ini` inside that volum
 - Mods conflict: add in small batches and watch logs. A missing or removed Workshop item can block all clients.
 - On a non-ARM host: this setup intentionally refuses to install; use a native AMD64 server distribution instead.
 - Upstream SteamCMD entrypoint: this Compose file explicitly overrides the SteamCMD image entrypoint because some image revisions otherwise discard `+app_update` arguments.
-
-## Private MarcBoid profile
-
-MarcBoid's customized sandbox settings, Workshop selection, credentials, and runtime configuration **do not belong in this public repo**. They should be backed up privately with a separate configuration-only export, not uploaded as a GitHub example.
 
 ## License / third-party content
 
