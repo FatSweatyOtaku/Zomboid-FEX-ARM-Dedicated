@@ -1,0 +1,63 @@
+# Vanilla Project Zomboid dedicated server (ARM64 host, FEX x86_64 emulator).
+# No Workshop items or game settings are supplied.
+services:
+  installer:
+    profiles: [tools]
+    image: supersunho/steamcmd:arm64
+    platform: linux/arm64
+    user: "1001:1001"
+    entrypoint: ["FEXBash", "/home/steam/steamcmd/steamcmd.sh"]
+    command:
+      - +force_install_dir
+      - /project-zomboid
+      - +login
+      - anonymous
+      - +app_update
+      - "380870"
+      - validate
+      - +quit
+    volumes:
+      - game:/project-zomboid
+      - steam-home:/home/steam/.steam
+      - steamapps:/home/steam/Steam
+
+  server:
+    image: supersunho/fex-emu:ubuntu-24.04
+    platform: linux/arm64
+    user: "1001:1001"
+    working_dir: /project-zomboid
+    environment:
+      HOME: /tmp
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - >-
+        exec FEX ./ProjectZomboid64
+        -cachedir=/project-zomboid-config
+        -servername=${SERVER_NAME:?Set SERVER_NAME in .env}
+        -adminusername=admin
+        -adminpassword=${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+    ports:
+      - "16261:16261/udp"
+      - "16262:16262/udp"
+      - "8766:8766/udp"
+      - "8767:8767/udp"
+    volumes:
+      - game:/project-zomboid
+      - config:/project-zomboid-config
+      - steam-home:/home/steam/.steam
+      - steamapps:/home/steam/Steam
+    restart: unless-stopped
+    cpus: 3.0
+    mem_limit: 10g
+    stop_grace_period: 90s
+
+volumes:
+  game:
+    name: pzfex-game
+  config:
+    name: pzfex-config
+  steam-home:
+    name: pzfex-steam-home
+  steamapps:
+    name: pzfex-steamapps
