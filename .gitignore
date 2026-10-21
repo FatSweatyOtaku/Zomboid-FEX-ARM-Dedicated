@@ -5,3 +5,4 @@
 *.bak
 *.pid
 __pycache__/
+.tools/
