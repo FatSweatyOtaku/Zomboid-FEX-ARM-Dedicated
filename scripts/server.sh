@@ -8,12 +8,12 @@ usage() {
   cat <<'HELP'
 Usage: sudo ./scripts/server.sh {install|update|start|stop|restart|logs|status}
 
-install : create private .env, SteamCMD install/validate PZ, apply FEX JVM flags, start
-update  : stop PZ, SteamCMD game update/validate, apply flags, restart
-start   : start existing server (also checks configured Workshop items)
+install : generate a private admin password, install/validate game, apply FEX JVM flags, start
+update  : stop game, SteamCMD update/validate, apply JVM flags, start
+start   : start the existing server (also checks configured Workshop items)
 stop    : graceful stop
 restart : graceful stop/start (also checks configured Workshop items)
-logs    : follow server logs (Ctrl+C stops watching only)
+logs    : follow logs (Ctrl+C stops watching only)
 status  : show container status
 
 Saves are preserved; no automatic world wipe is provided.
@@ -24,10 +24,8 @@ if [[ "${EUID}" -ne 0 ]]; then
   echo 'Run with sudo/root so Docker volumes can be configured.' >&2
   exit 1
 fi
-
 command -v docker >/dev/null || { echo 'Docker is required.' >&2; exit 1; }
 docker compose version >/dev/null || { echo 'Docker Compose v2 is required.' >&2; exit 1; }
-
 if [[ "$(uname -m)" != aarch64 ]]; then
   echo 'This deployment targets an ARM64/aarch64 Linux host.' >&2
   exit 1
@@ -59,11 +57,14 @@ set +a
 
 COMPOSE=(docker compose -f "$ROOT/compose.yaml")
 
+prepare_install_volumes() {
+  "${COMPOSE[@]}" --profile tools run --rm --no-deps --user 0 --entrypoint /bin/sh installer \
+    -c 'mkdir -p /project-zomboid /home/steam/Steam /home/steam/.steam; chown -R 1001:1001 /project-zomboid /home/steam/Steam /home/steam/.steam'
+}
 prepare_config_volume() {
   "${COMPOSE[@]}" run --rm --no-deps --user 0 --entrypoint /bin/sh server \
     -c 'chown -R 1001:1001 /project-zomboid-config'
 }
-
 run_steamcmd() {
   "${COMPOSE[@]}" --profile tools run --rm --no-deps installer
   mountpoint="$(docker volume inspect -f '{{.Mountpoint}}' pzfex-game)"
@@ -74,6 +75,7 @@ run_steamcmd() {
 case "${1:-}" in
   install)
     "${COMPOSE[@]}" pull installer server
+    prepare_install_volumes
     run_steamcmd
     prepare_config_volume
     "${COMPOSE[@]}" up -d server
