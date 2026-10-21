@@ -1,26 +1,7 @@
-# Vanilla Project Zomboid dedicated server (ARM64 host, FEX x86_64 emulator).
-# No Workshop items or game settings are supplied.
+# Vanilla Project Zomboid dedicated server on ARM64, using FEX for x86_64.
+# The native ARM64 DepotDownloader installer runs on the HOST (scripts/server.sh).
+# No Workshop mods, INI files, or saved world are bundled.
 services:
-  installer:
-    profiles: [tools]
-    image: supersunho/steamcmd:arm64
-    platform: linux/arm64
-    user: "1001:1001"
-    entrypoint: ["FEXBash", "/home/steam/steamcmd/steamcmd.sh"]
-    command:
-      - +force_install_dir
-      - /project-zomboid
-      - +login
-      - anonymous
-      - +app_update
-      - "380870"
-      - validate
-      - +quit
-    volumes:
-      - game:/project-zomboid
-      - steam-home:/home/steam/.steam
-      - steamapps:/home/steam/Steam
-
   server:
     image: supersunho/fex-emu:ubuntu-24.04
     platform: linux/arm64
