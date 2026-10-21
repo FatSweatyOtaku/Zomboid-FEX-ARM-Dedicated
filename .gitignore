@@ -1,0 +1,7 @@
+.env
+*.tar.gz
+*.sha256
+*.log
+*.bak
+*.pid
+__pycache__/
