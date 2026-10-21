@@ -2,7 +2,7 @@
 
 A **vanilla, no-Workshop-mods** Docker Compose starting point for running the x86_64 Project Zomboid dedicated server on an **ARM64 Linux VPS**, using [FEX-Emu](https://github.com/FEX-Emu/FEX). Based on the architecture used for my personal Zomboid server on Oracle Cloud Always Free (Ampere A1, 4 OCPUs / 24 GiB).
 
-> **Public preview / not yet independently end-to-end tested on a new VPS.** Steam, FEX, and Project Zomboid Build 42 change frequently. Contributions and verified installation reports are welcome. This repository contains **none of MarcBoid's private server settings, passwords, player data, saves or mods**.
+> **Public preview / not yet independently end-to-end tested on a new VPS.** Steam, FEX, and Project Zomboid Build 42 change frequently. Contributions and verified installation reports are welcome.
 
 ## Requirements
 
